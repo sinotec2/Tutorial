@@ -10,7 +10,7 @@ def echos():
     print 'sheet2 cols:'
     for i in df2.columns:print i
     print wsname,' cols:',df_cat.columns
-    plt=list(df1[u'管制編號'])
+    plt=list(df1[u'管制編�?'])
     plant=set(plt)
     print 'num. of plants selected:',len(plant_s)
     print 'out of all plants:',len(plant)
@@ -25,11 +25,11 @@ def echos():
     print 'categorized COD sum checking'
     print 'sum check', sum(list(df_pv['COD']))
     return
-
+  
 #read the input file
-#fname=u'160617  國家溫室氣體清冊需求資料-水保處提供.xlsx'
+#fname=u'160617  ?�家溫室�??清�??�求�???水�??��?�?xlsx'
 fname=u'160617.xlsx'
-wsname=u'11業'
+wsname=u'11�?
 df1 = read_excel(fname,sheetname='sheet1',skiprows=1, parse_cols = 'A,G,J')
 df2 = read_excel(fname,sheetname='sheet2',skiprows=1, parse_cols = 'A:G',na_values=['NA'], convert_float=True)
 df_cat = read_excel(fname,sheetname=wsname,skiprows=0, parse_cols = 'A:B')
@@ -37,16 +37,16 @@ print 'the input file is read'
 #first of all, reduce the whole database and accesslorate the process
 (cat,plt,reg)=([],[],[])
 #using set() but not list() to avoid duplicates(different facilities)
-for p in set(list(df1[u'管制編號'])):
-    boo=df1[u'管制編號']==p   #the boolean criteria
-    cat.append(list(df1[boo][u'行業別'])[0][6:]) #store the cat. without the number
-    reg.append(list(df1[boo][u'區域類別(如是否位於工業區)'])[0])
+for p in set(list(df1[u'管制編�?'])):
+    boo=df1[u'管制編�?']==p   #the boolean criteria
+    cat.append(list(df1[boo][u'行業??])[0][6:]) #store the cat. without the number
+    reg.append(list(df1[boo][u'?�?��???如是?��??�工業�?)'])[0])
     plt.append(p)
 a={'plant_all':Series(plt),'cat_all':Series(cat),'reg_all':Series(reg)}
 df_all=DataFrame(a).sort_values('plant_all')    #the new, reduced df of all sources
 #secondly, do the section
 cat_nam=list(df_cat[u'業別'])
-reg_nam=list(df_cat[u'工業區'])
+reg_nam=list(df_cat[u'工業?�'])
 (categ_s,plant_s)=([],[])
 for c in cat_nam:
     for r in reg_nam[0:2]: #other are blank (NaN)
@@ -65,14 +65,14 @@ df_s=DataFrame(a).sort_values('plant') #sources with certain categories and regi
 print 'sheet1 is done, now dealwith sheet2, the COD'
 #reading the COD for each plant and season
 #screening the year and selecting the plants
-boo=(df2[u'管制編號'].map(lambda x: x in plant_s ))
+boo=(df2[u'管制編�?'].map(lambda x: x in plant_s ))
 df2_s=df2[boo]
-boo=(df2_s[u'申報區間(起)'].map(lambda x: '104' in x)) 
+boo=(df2_s[u'?�報?�??�?'].map(lambda x: '104' in x)) 
 df2_yr=df2_s[boo]
 #calculate the COD emissions                                                     
-COD=((df2_yr[u'進流污水量(噸)'] * df2_yr[u'進流口COD值(mg/L)'] - \
-   df2_yr[u'放流水量(噸)'] * df2_yr[u'放流口COD值(mg/L)'] ) /10**6).clip(0)
-a={'plant':Series(df2_yr[u'管制編號']),'COD':Series(COD)}
+COD=((df2_yr[u'?��?污水????'] * df2_yr[u'?��??�COD??mg/L)'] - \
+   df2_yr[u'?��?水�?(??'] * df2_yr[u'?��??�COD??mg/L)'] ) /10**6).clip(0)
+a={'plant':Series(df2_yr[u'管制編�?']),'COD':Series(COD)}
 df_2=DataFrame(a).sort_values('plant')
 df_2pv=pivot_table(df_2,index=["plant"],values=["COD"],aggfunc=np.sum)
 df_2pv['plant']=df_2pv.index #reset the plant as a column
